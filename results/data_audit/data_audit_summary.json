@@ -1,0 +1,36 @@
+{
+  "dataset_name": "Oxford-IIIT Pet",
+  "source_url": "https://www.robots.ox.ac.uk/~vgg/data/pets/",
+  "license": "CC BY-SA 4.0",
+  "trainval_samples": 3680,
+  "test_samples": 3669,
+  "total_samples": 7349,
+  "num_breeds": 37,
+  "mask_labels": {
+    "1": "Foreground",
+    "2": "Background",
+    "3": "Ambiguous Border"
+  },
+  "pixel_counts_trainval": {
+    "Foreground": 184563866,
+    "Background": 378924356,
+    "Ambiguous Border": 69303313
+  },
+  "pixel_ratios_trainval": {
+    "Foreground": 0.2916661424682301,
+    "Background": 0.5988138826793883,
+    "Ambiguous Border": 0.10951997485238167
+  },
+  "invalid_sample_count": 0,
+  "representative_indices": [
+    2406,
+    2845,
+    1593,
+    3159,
+    1614,
+    327
+  ],
+  "seed": 42,
+  "torch_version": "2.11.0+cpu",
+  "torchvision_version": "0.26.0+cpu"
+}
