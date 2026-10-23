@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments and secrets
+.venv/
+venv/
+.env
+.env.*
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Editors and operating systems
+.DS_Store
+.idea/
+.vscode/
+
+# Data and downloaded archives
+data/
+datasets/
+*.zip
+*.tar
+*.tar.gz
+
+# Model weights and checkpoints
+checkpoints/
+weights/
+*.ckpt
+*.pt
+*.pth
+*.onnx
+
+# Generated experiment outputs; retain the directory placeholder
+results/*
+!results/.gitkeep
+runs/
+wandb/
+mlruns/

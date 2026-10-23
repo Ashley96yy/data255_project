@@ -1,0 +1,11 @@
+# Initial development dependencies.
+# Pin exact versions after the baseline Colab/runtime environment is validated.
+torch
+torchvision
+numpy
+Pillow
+matplotlib
+pandas
+scikit-learn
+jupyterlab
+ipykernel
