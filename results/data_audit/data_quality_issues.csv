@@ -1,0 +1,8 @@
+dataset_index,breed_label,split,data_quality
+1404,28,excluded,missing_segmentation_mask
+2407,11,excluded,missing_segmentation_mask
+2410,11,excluded,missing_segmentation_mask
+2437,11,excluded,missing_segmentation_mask
+2833,19,excluded,missing_segmentation_mask
+2889,21,excluded,missing_segmentation_mask
+3246,28,excluded,missing_segmentation_mask
