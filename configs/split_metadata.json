@@ -1,0 +1,11 @@
+{
+  "dataset": "Oxford-IIIT Pet",
+  "source_split": "trainval",
+  "strategy": "stratified_by_breed",
+  "seed": 42,
+  "train_count": 2944,
+  "val_count": 736,
+  "official_test_count": 3669,
+  "train_fraction": 0.8,
+  "val_fraction": 0.2
+}
