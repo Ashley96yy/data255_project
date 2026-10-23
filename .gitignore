@@ -20,8 +20,9 @@ venv/
 .idea/
 .vscode/
 
-# Data and downloaded archives
-data/
+# Data and downloaded archives; keep only the download instructions
+data/*
+!data/README.md
 datasets/
 *.zip
 *.tar
