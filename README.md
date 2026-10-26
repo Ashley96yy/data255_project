@@ -59,6 +59,30 @@ The data audit should verify at minimum:
 5. Evaluate once on the held-out test split and save aggregate and boundary-level metrics.
 6. Document environment versions, random seeds, configuration, and limitations.
 
+## Week 3 E0 reference baseline
+
+`src/models/small_fcn.py` implements a lightweight fully convolutional network
+for a three-class Cross-Entropy reference baseline:
+
+```text
+ConvBlock(3, 32) -> MaxPool -> ConvBlock(32, 64) -> MaxPool
+-> ConvBlock(64, 128) -> 1x1 Conv(3 classes) -> bilinear upsampling
+```
+
+The output contains raw logits (no softmax) and has the same height and width
+as the input. The model intentionally does not use U-Net skip connections.
+
+Run the model smoke test from the repository root:
+
+```bash
+python -m unittest -v tests/test_small_fcn.py
+```
+
+The test uses a synthetic batch with shape `[8, 3, 256, 256]`, checks the
+output shape, verifies that the logits and Cross-Entropy loss are finite, and
+prints the trainable parameter count. It does not train the model or report an
+experimental segmentation score.
+
 ## Reproducibility checklist
 
 - Keep experiment parameters in `configs/`.
