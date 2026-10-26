@@ -72,6 +72,9 @@ ConvBlock(3, 32) -> MaxPool -> ConvBlock(32, 64) -> MaxPool
 The output contains raw logits (no softmax) and has the same height and width
 as the input. The model intentionally does not use U-Net skip connections.
 
+For a cell-by-cell version of the model and smoke test, open
+`notebooks/e0_small_fcn.ipynb`.
+
 Run the model smoke test from the repository root:
 
 ```bash
