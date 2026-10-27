@@ -72,8 +72,31 @@ ConvBlock(3, 32) -> MaxPool -> ConvBlock(32, 64) -> MaxPool
 The output contains raw logits (no softmax) and has the same height and width
 as the input. The model intentionally does not use U-Net skip connections.
 
-For a cell-by-cell version of the model and smoke test, open
-`notebooks/e0_small_fcn.ipynb`.
+Open `notebooks/e0_small_fcn.ipynb` for the complete experiment workflow:
+cleaned train/validation DataLoaders, the visible model definition, forward/loss
+checks, Adam training, validation IoU, best-checkpoint reload, and plots.
+
+Run the notebook top to bottom with `RUN_MODE = "smoke"` first. This performs
+one epoch of two training batches and two validation batches on real data.
+For the full experiment, set `RUN_MODE = "full"` and restart/run all; the
+initial configuration in `configs/e0_small_fcn.json` uses 20 epochs, seed 42,
+batch size 8, and learning rate 0.001. These are starter settings, not tuned
+results. The notebook has a setup cell for Colab; select a GPU runtime and set
+`DOWNLOAD_DATA = True` there if needed.
+
+The data root is detected under `data/` or `notebooks/data/`. Alternatively,
+set `E0_DATA_ROOT` to a directory containing `oxford-iiit-pet/`. Both train and
+validation use `configs/train_val_split_clean.csv`; the test split is reserved.
+IoU uses the aggregate validation confusion matrix, includes background and
+border, and excludes a class from the mean only when its union is zero.
+
+Each run creates `results/e0_small_fcn/<mode>_<time>_<id>/` with `run.json`,
+`history.json`, `best.pt`, `curves.png`, and `prediction.png`. The checkpoint
+is selected by highest validation mIoU. Run metadata includes environment
+versions, configuration, split/source hashes, Git state, and run mode. These
+artifacts are ignored by Git. Download or persist the run directory before
+ending a Colab session. Smoke results are pipeline checks, not formal baseline
+scores.
 
 Run the model smoke test from the repository root:
 
@@ -85,6 +108,12 @@ The test uses a synthetic batch with shape `[8, 3, 256, 256]`, checks the
 output shape, verifies that the logits and Cross-Entropy loss are finite, and
 prints the trainable parameter count. It does not train the model or report an
 experimental segmentation score.
+
+Run all model, metric, and training checks with:
+
+```bash
+python -m unittest discover -s tests -v
+```
 
 ## Reproducibility checklist
 
