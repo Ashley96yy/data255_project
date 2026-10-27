@@ -1,0 +1,48 @@
+{
+  "config": {
+    "seed": 42,
+    "image_size": 256,
+    "batch_size": 8,
+    "num_workers": 0,
+    "epochs": 20,
+    "learning_rate": 0.001,
+    "augment": true,
+    "split_csv": "configs/train_val_split_clean.csv",
+    "mode": "full",
+    "max_train_batches": null,
+    "max_val_batches": null
+  },
+  "metadata": {
+    "python": "3.13.16",
+    "torch": "2.11.0+cu130",
+    "torchvision": "0.26.0+cu130",
+    "numpy": "2.1.3",
+    "pandas": "2.2.3",
+    "pillow": "11.3.0",
+    "device": "cuda",
+    "device_name": "Tesla T4",
+    "cuda": "13.0",
+    "cudnn": 92700,
+    "split_sha256": "6b0ea9c5348757a7ea454419cf9635b61faddfd2c5d98714a997ce8d1f563f7a",
+    "git_commit": "99cb249cd4dfc44243e9454d1a8716cebb95f6a9",
+    "git_tracked_changes": false,
+    "train_samples": 2937,
+    "val_samples": 736,
+    "class_names": [
+      "foreground",
+      "background",
+      "border"
+    ],
+    "trainable_parameters": 287843,
+    "source_sha256": {
+      "src/dataset.py": "42d2c52528b0af345f8f6cdfe42c8c21e7031ebe1eddafda44b6163b3552c090",
+      "src/metrics.py": "7a197c140c69cafd37a59d381ab8ff92ed24770f6b1bb64e5b475a724e95ad88",
+      "src/training.py": "9fff1f0c2cc2b57cf4ae8e91165c61fc95fce839f201c9bd989428c0bce26607",
+      "src/models/small_fcn.py": "eac03acfbfd84386263b288c8be51692827aae2a76e5a6bca7d2446f9c784b17"
+    }
+  },
+  "checkpoint_selection": "highest validation mIoU; first epoch wins ties",
+  "status": "completed",
+  "best_epoch": 19,
+  "best_val_miou": 0.6076129781990164
+}
