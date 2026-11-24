@@ -47,3 +47,33 @@ def iou_from_confusion(matrix):
         "miou": sum(defined) / len(defined) if defined else None,
         "per_class_iou": per_class,
     }
+
+def dice_from_confusion(matrix):
+    """Compute per-class and macro Dice from dataset-level pixel counts.
+
+    Rows are target classes; columns are predicted classes.
+    Classes absent from both targets and predictions are undefined (None)
+    and excluded from the macro average.
+    """
+    if matrix.ndim != 2 or matrix.shape[0] != matrix.shape[1]:
+        raise ValueError("Expected a square confusion matrix.")
+    if (matrix < 0).any().item():
+        raise ValueError("Confusion counts cannot be negative.")
+
+    matrix = matrix.detach().to(device="cpu", dtype=torch.float64)
+
+    true_positive = matrix.diag()
+    target_counts = matrix.sum(dim=1)
+    predicted_counts = matrix.sum(dim=0)
+    denominator = target_counts + predicted_counts
+
+    per_class = [
+        float(2 * tp / total) if total > 0 else None
+        for tp, total in zip(true_positive, denominator)
+    ]
+    defined = [value for value in per_class if value is not None]
+
+    return {
+        "macro_dice": sum(defined) / len(defined) if defined else None,
+        "per_class_dice": per_class,
+    }
