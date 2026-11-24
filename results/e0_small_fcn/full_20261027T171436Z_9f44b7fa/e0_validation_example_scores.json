@@ -1,0 +1,245 @@
+{
+  "model": "Small FCN + cross-entropy",
+  "epoch": 19,
+  "split": "validation",
+  "samples_scored": 736,
+  "checkpoint_sha256": "c54b625c4a0eccb93e8eb16cb8d7c78301c5b0dd1a2ba8a54804281c86caaf22",
+  "split_csv_sha256": "6b0ea9c5348757a7ea454419cf9635b61faddfd2c5d98714a997ce8d1f563f7a",
+  "device": "CPU",
+  "torch_version": "2.14.1",
+  "torchvision_version": "0.29.1",
+  "recomputed_dataset_level_validation_miou": 0.6076364141452958,
+  "selection": "Three examples visually selected from each of the highest- and lowest-scoring 74 validation samples ranked by per-image mIoU, with high-scoring examples showing different retained structures and low-scoring examples showing different types of error.",
+  "upper_group_min_miou": 0.7370098378809041,
+  "lower_group_max_miou": 0.4407766493283003,
+  "class_names": [
+    "Foreground",
+    "Background",
+    "Ambiguous border"
+  ],
+  "confusion_matrix_orientation": "target rows, predicted columns",
+  "cases": [
+    {
+      "panel": "A",
+      "group": "Success",
+      "image_id": "Siamese_183",
+      "official_trainval_index": 3456,
+      "validation_position": 683,
+      "per_image_miou": 0.855134344189351,
+      "per_class_iou": [
+        0.9334708150273469,
+        0.9736479300429354,
+        0.6582842874977707
+      ],
+      "confusion_matrix": [
+        [
+          10411,
+          82,
+          153
+        ],
+        [
+          0,
+          49436,
+          452
+        ],
+        [
+          507,
+          804,
+          3691
+        ]
+      ],
+      "marked_xy_at_256px": [
+        171,
+        63
+      ],
+      "point_target_class": "Foreground",
+      "point_predicted_class": "Foreground",
+      "annotation": "The ear tip and head silhouette are retained."
+    },
+    {
+      "panel": "B",
+      "group": "Success",
+      "image_id": "shiba_inu_131",
+      "official_trainval_index": 1580,
+      "validation_position": 328,
+      "per_image_miou": 0.8624070273390315,
+      "per_class_iou": [
+        0.9072925893120756,
+        0.9511085702923047,
+        0.7288199224127143
+      ],
+      "confusion_matrix": [
+        [
+          18438,
+          834,
+          621
+        ],
+        [
+          8,
+          38265,
+          481
+        ],
+        [
+          421,
+          644,
+          5824
+        ]
+      ],
+      "marked_xy_at_256px": [
+        110,
+        185
+      ],
+      "point_target_class": "Ambiguous border",
+      "point_predicted_class": "Ambiguous border",
+      "annotation": "The border band around the collar is retained."
+    },
+    {
+      "panel": "C",
+      "group": "Success",
+      "image_id": "german_shorthaired_123",
+      "official_trainval_index": 721,
+      "validation_position": 146,
+      "per_image_miou": 0.7897013510126497,
+      "per_class_iou": [
+        0.8138303505241978,
+        0.9438554695255112,
+        0.61141823298824
+      ],
+      "confusion_matrix": [
+        [
+          7685,
+          355,
+          602
+        ],
+        [
+          5,
+          47542,
+          351
+        ],
+        [
+          796,
+          2117,
+          6083
+        ]
+      ],
+      "marked_xy_at_256px": [
+        49,
+        184
+      ],
+      "point_target_class": "Foreground",
+      "point_predicted_class": "Foreground",
+      "annotation": "The thin hind leg remains connected to the body."
+    },
+    {
+      "panel": "D",
+      "group": "Failure",
+      "image_id": "newfoundland_11",
+      "official_trainval_index": 1117,
+      "validation_position": 224,
+      "per_image_miou": 0.1672780305226967,
+      "per_class_iou": [
+        7.388525619712587e-05,
+        0.44285186439634205,
+        0.05890834191555098
+      ],
+      "confusion_matrix": [
+        [
+          2,
+          26913,
+          0
+        ],
+        [
+          146,
+          28765,
+          470
+        ],
+        [
+          8,
+          8660,
+          572
+        ]
+      ],
+      "marked_xy_at_256px": [
+        106,
+        151
+      ],
+      "point_target_class": "Foreground",
+      "point_predicted_class": "Background",
+      "annotation": "Nearly all dog foreground is missed."
+    },
+    {
+      "panel": "E",
+      "group": "Failure",
+      "image_id": "Bengal_187",
+      "official_trainval_index": 2140,
+      "validation_position": 432,
+      "per_image_miou": 0.3762016608669576,
+      "per_class_iou": [
+        0.4461733815426997,
+        0.41580756013745707,
+        0.2666240409207161
+      ],
+      "confusion_matrix": [
+        [
+          20731,
+          3152,
+          890
+        ],
+        [
+          17982,
+          15851,
+          174
+        ],
+        [
+          3709,
+          962,
+          2085
+        ]
+      ],
+      "marked_xy_at_256px": [
+        38,
+        44
+      ],
+      "point_target_class": "Background",
+      "point_predicted_class": "Foreground",
+      "annotation": "The model labels much of the brown cushion as foreground."
+    },
+    {
+      "panel": "F",
+      "group": "Failure",
+      "image_id": "samoyed_167",
+      "official_trainval_index": 3304,
+      "validation_position": 658,
+      "per_image_miou": 0.426179828600884,
+      "per_class_iou": [
+        0.5533573681838666,
+        0.7007864314901131,
+        0.024395686128672368
+      ],
+      "confusion_matrix": [
+        [
+          12279,
+          2451,
+          867
+        ],
+        [
+          3232,
+          34129,
+          391
+        ],
+        [
+          3361,
+          8498,
+          328
+        ]
+      ],
+      "marked_xy_at_256px": [
+        110,
+        41
+      ],
+      "point_target_class": "Ambiguous border",
+      "point_predicted_class": "Background",
+      "annotation": "The model misses the trimap border above the head."
+    }
+  ]
+}
