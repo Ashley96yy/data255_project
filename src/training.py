@@ -1,4 +1,4 @@
-"""Training helpers used by notebooks/e0_small_fcn.ipynb."""
+"""Training helpers shared by the E0 notebook and the E1-E4 U-Net runs."""
 
 from itertools import islice
 import json
@@ -10,7 +10,7 @@ import numpy as np
 import torch
 from torch import nn
 
-from src.metrics import confusion_matrix, iou_from_confusion
+from src.metrics import confusion_matrix, dice_from_confusion, iou_from_confusion
 
 
 def seed_everything(seed):
@@ -32,13 +32,20 @@ def seed_worker(worker_id):
     random.seed(worker_seed)
 
 
-def run_epoch(model, loader, device, optimizer=None, max_batches=None):
-    """Run one train or validation pass and aggregate all observed pixels."""
+def run_epoch(model, loader, device, optimizer=None, max_batches=None, criterion=None):
+    """Run one train or validation pass and aggregate all observed pixels.
+
+    ``criterion`` defaults to plain Cross-Entropy, so E0 behaves as before.
+    Use ``src.losses.build_loss`` for the E2-E4 losses.
+    """
     if max_batches is not None and max_batches < 1:
         raise ValueError("max_batches must be positive or None.")
     training = optimizer is not None
     model.train(training)
-    criterion = nn.CrossEntropyLoss()
+    if criterion is None:
+        criterion = nn.CrossEntropyLoss()
+    criterion = criterion.to(device)
+    component_totals = {}
     matrix = torch.zeros(3, 3, dtype=torch.int64)
     total_loss = 0.0
     pixels = samples = batches = 0
@@ -53,13 +60,15 @@ def run_epoch(model, loader, device, optimizer=None, max_batches=None):
             logits = model(images)
             loss = criterion(logits, masks)
             if not torch.isfinite(loss).item():
-                raise FloatingPointError("Non-finite Cross-Entropy loss.")
+                raise FloatingPointError("Non-finite training loss.")
             if training:
                 loss.backward()
                 optimizer.step()
 
             matrix += confusion_matrix(logits.detach().argmax(dim=1), masks).cpu()
             total_loss += loss.item() * masks.numel()
+            for key, value in getattr(criterion, "last_components", {}).items():
+                component_totals[key] = component_totals.get(key, 0.0) + value * masks.numel()
             pixels += masks.numel()
             samples += images.shape[0]
             batches += 1
@@ -68,7 +77,9 @@ def run_epoch(model, loader, device, optimizer=None, max_batches=None):
         raise ValueError("The DataLoader produced no pixels.")
     return {
         "loss": total_loss / pixels,
+        **{f"loss_{key}": value / pixels for key, value in component_totals.items()},
         **iou_from_confusion(matrix),
+        **dice_from_confusion(matrix),
         "confusion_matrix": matrix.tolist(),
         "samples": samples,
         "pixels": pixels,
@@ -76,11 +87,16 @@ def run_epoch(model, loader, device, optimizer=None, max_batches=None):
     }
 
 
-def fit(model, train_loader, val_loader, optimizer, device, config, output_dir, metadata):
+def fit(
+    model, train_loader, val_loader, optimizer, device, config, output_dir, metadata,
+    criterion=None,
+):
     """Select the best checkpoint by validation mIoU in a new run directory.
 
     Smoke runs use batch limits and must not be compared as formal experiments.
     The caller must re-create the model/optimizer/loaders for each fresh run.
+    ``criterion`` defaults to plain Cross-Entropy; the same loss is used for
+    training and validation, and its repr is stored in run.json.
     """
     epochs = config["epochs"]
     if epochs < 1:
@@ -98,6 +114,7 @@ def fit(model, train_loader, val_loader, optimizer, device, config, output_dir, 
         "config": config,
         "metadata": metadata,
         "checkpoint_selection": "highest validation mIoU; first epoch wins ties",
+        "loss": repr(criterion) if criterion is not None else "CrossEntropyLoss()",
         "status": "running",
     }
     save_json(output_dir / "run.json", run_record)
@@ -109,9 +126,11 @@ def fit(model, train_loader, val_loader, optimizer, device, config, output_dir, 
     try:
         for epoch in range(1, epochs + 1):
             train_metrics = run_epoch(
-                model, train_loader, device, optimizer, train_limit
+                model, train_loader, device, optimizer, train_limit, criterion
             )
-            val_metrics = run_epoch(model, val_loader, device, max_batches=val_limit)
+            val_metrics = run_epoch(
+                model, val_loader, device, max_batches=val_limit, criterion=criterion
+            )
             score = val_metrics["miou"]
             if score is None or not math.isfinite(score):
                 raise FloatingPointError("Validation mIoU is undefined or non-finite.")
@@ -133,8 +152,9 @@ def fit(model, train_loader, val_loader, optimizer, device, config, output_dir, 
             save_json(output_dir / "history.json", history)
             print(
                 f"[{config['mode']}] epoch {epoch}/{epochs} | "
-                f"train CE={train_metrics['loss']:.4f} | "
-                f"val CE={val_metrics['loss']:.4f} | val mIoU={score:.4f}",
+                f"train loss={train_metrics['loss']:.4f} | "
+                f"val loss={val_metrics['loss']:.4f} | val mIoU={score:.4f} | "
+                f"val border IoU={val_metrics['per_class_iou'][2] or 0:.4f}",
                 flush=True,
             )
         run_record.update(

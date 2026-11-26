@@ -140,3 +140,82 @@ macro average.
 For E0 at selected epoch 19, validation mIoU is 60.7613% and macro Dice
 is 73.6560%. Foreground, background, and border Dice scores are
 79.7332%, 89.6342%, and 51.6006%, respectively.
+
+## E1-E4 loss comparison setup
+
+`src/losses/` implements the four loss settings from the proposal. Every
+setting is selected by the `loss` block of its config:
+
+| Experiment | Config | `loss.name` |
+|---|---|---|
+| E1 U-Net + CE | `configs/e1_unet_ce.json` | `ce` |
+| E2 U-Net + CE + Dice | `configs/e2_unet_ce_dice.json` | `ce_dice` |
+| E3 U-Net + weighted CE | `configs/e3_unet_wce.json` | `wce` |
+| E4 U-Net + weighted CE + Dice | `configs/e4_unet_wce_dice.json` | `wce_dice` |
+
+```python
+from src.losses import build_loss
+criterion = build_loss(config["loss"])
+history = fit(model, train_loader, val_loader, optimizer, device,
+              config, output_dir, metadata, criterion=criterion)
+```
+
+`run_epoch` and `fit` default to plain Cross-Entropy, so the E0 notebook is
+unchanged. Each epoch now also logs per-class/macro Dice and, for the combined
+losses, the separate `loss_ce` and `loss_dice` terms. Dice loss is soft
+multi-class Dice on softmax probabilities, pooled over the batch, averaged over
+all three classes, with `smooth = 1`. `dice_weight` (default 1.0) and
+`class_weight_scheme` should be tuned on validation only.
+
+Class weights for E3/E4 are computed from the 2,937 **training** images only,
+at 256 x 256 after nearest-neighbour mask resizing. Run this once on the
+machine that has the data before E3/E4:
+
+```bash
+python -m scripts.compute_class_weights --data-root data
+```
+
+It writes `configs/class_weights.json` with pixel counts and two schemes:
+`median_frequency` (default) and `inverse_frequency` (mean 1). Weighted losses
+refuse a weights file whose `source_split` is not `train`.
+
+## U-Net and command-line training
+
+`src/models/unet.py` follows Ronneberger et al. (2015): 4 down-sampling stages,
+64 base channels doubling to 1024, 2x2 transposed-convolution up-sampling and
+concatenated skip connections. Two standard changes keep it consistent with
+E0: "same" padding (logits have the input size, no cropping) and batch
+normalization in every `ConvBlock`. With the default settings it has
+31,037,763 trainable parameters. It is the team's own implementation of the
+paper's architecture; no third-party code is copied. `build_model(config)`
+selects `small_fcn` or `unet` from the config's `"model"` field.
+
+`scripts/train.py` trains any config for one or more seeds without the
+notebook. Check the pipeline on real data first, then run the full experiments:
+
+```bash
+python -m scripts.compute_class_weights --data-root data        # once, before E3/E4
+python -m scripts.train configs/e1_unet_ce.json --mode smoke    # 1 epoch, 2+2 batches
+
+for c in e1_unet_ce e2_unet_ce_dice e3_unet_wce e4_unet_wce_dice; do
+    python -m scripts.train configs/$c.json --seeds 42 43 44 --num-workers 4
+done
+```
+
+Each run writes `results/<config>/<mode>_seed<seed>_<time>_<id>/` with
+`run.json`, `history.json`, `best.pt` (not tracked) and `summary.json`
+(selected-epoch validation mIoU, per-class IoU/Dice, parameter count, and
+seconds per epoch). Checkpoints are selected by validation mIoU; the test split
+is never loaded during training. `--data-root` (or `DATA255_DATA_ROOT`) points
+to the directory that contains `oxford-iiit-pet/`.
+
+## Duplicate check
+
+```bash
+python -m scripts.check_duplicates --data-root data --save-grid
+```
+
+Hashes all 7,349 images (pHash + MD5) and writes candidate pairs within and
+across train/val/test to `results/data_audit/duplicate_pairs.csv` and
+`duplicate_summary.json` (default threshold: pHash distance <= 6 of 64 bits).
+Candidates need visual review; the script does not change the split.
