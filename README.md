@@ -140,3 +140,54 @@ macro average.
 For E0 at selected epoch 19, validation mIoU is 60.7613% and macro Dice
 is 73.6560%. Foreground, background, and border Dice scores are
 79.7332%, 89.6342%, and 51.6006%, respectively.
+
+## E1-E4 loss comparison setup
+
+`src/losses/` implements the four loss settings from the proposal. Every
+setting is selected by the `loss` block of its config:
+
+| Experiment | Config | `loss.name` |
+|---|---|---|
+| E1 U-Net + CE | `configs/e1_unet_ce.json` | `ce` |
+| E2 U-Net + CE + Dice | `configs/e2_unet_ce_dice.json` | `ce_dice` |
+| E3 U-Net + weighted CE | `configs/e3_unet_wce.json` | `wce` |
+| E4 U-Net + weighted CE + Dice | `configs/e4_unet_wce_dice.json` | `wce_dice` |
+
+```python
+from src.losses import build_loss
+criterion = build_loss(config["loss"])
+history = fit(model, train_loader, val_loader, optimizer, device,
+              config, output_dir, metadata, criterion=criterion)
+```
+
+`run_epoch` and `fit` default to plain Cross-Entropy, so the E0 notebook is
+unchanged. Each epoch now also logs per-class/macro Dice and, for the combined
+losses, the separate `loss_ce` and `loss_dice` terms. Dice loss is soft
+multi-class Dice on softmax probabilities, pooled over the batch, averaged over
+all three classes, with `smooth = 1`. `dice_weight` (default 1.0) and
+`class_weight_scheme` should be tuned on validation only.
+
+Class weights for E3/E4 are computed from the 2,937 **training** images only,
+at 256 x 256 after nearest-neighbour mask resizing. Run this once on the
+machine that has the data before E3/E4:
+
+```bash
+python -m scripts.compute_class_weights --data-root data
+```
+
+It writes `configs/class_weights.json` with pixel counts and two schemes:
+`median_frequency` (default) and `inverse_frequency` (mean 1). Weighted losses
+refuse a weights file whose `source_split` is not `train`.
+
+The U-Net model itself (`"model": "unet"`) is not implemented yet.
+
+## Duplicate check
+
+```bash
+python -m scripts.check_duplicates --data-root data --save-grid
+```
+
+Hashes all 7,349 images (pHash + MD5) and writes candidate pairs within and
+across train/val/test to `results/data_audit/duplicate_pairs.csv` and
+`duplicate_summary.json` (default threshold: pHash distance <= 6 of 64 bits).
+Candidates need visual review; the script does not change the split.

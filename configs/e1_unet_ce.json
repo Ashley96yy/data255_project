@@ -1,0 +1,19 @@
+{
+  "model": "unet",
+  "seed": 42,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "image_size": 256,
+  "batch_size": 8,
+  "num_workers": 0,
+  "epochs": 30,
+  "learning_rate": 0.001,
+  "augment": true,
+  "split_csv": "configs/train_val_split_clean.csv",
+  "loss": {
+    "name": "ce"
+  }
+}
