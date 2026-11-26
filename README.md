@@ -179,7 +179,35 @@ It writes `configs/class_weights.json` with pixel counts and two schemes:
 `median_frequency` (default) and `inverse_frequency` (mean 1). Weighted losses
 refuse a weights file whose `source_split` is not `train`.
 
-The U-Net model itself (`"model": "unet"`) is not implemented yet.
+## U-Net and command-line training
+
+`src/models/unet.py` follows Ronneberger et al. (2015): 4 down-sampling stages,
+64 base channels doubling to 1024, 2x2 transposed-convolution up-sampling and
+concatenated skip connections. Two standard changes keep it consistent with
+E0: "same" padding (logits have the input size, no cropping) and batch
+normalization in every `ConvBlock`. With the default settings it has
+31,037,763 trainable parameters. It is the team's own implementation of the
+paper's architecture; no third-party code is copied. `build_model(config)`
+selects `small_fcn` or `unet` from the config's `"model"` field.
+
+`scripts/train.py` trains any config for one or more seeds without the
+notebook. Check the pipeline on real data first, then run the full experiments:
+
+```bash
+python -m scripts.compute_class_weights --data-root data        # once, before E3/E4
+python -m scripts.train configs/e1_unet_ce.json --mode smoke    # 1 epoch, 2+2 batches
+
+for c in e1_unet_ce e2_unet_ce_dice e3_unet_wce e4_unet_wce_dice; do
+    python -m scripts.train configs/$c.json --seeds 42 43 44 --num-workers 4
+done
+```
+
+Each run writes `results/<config>/<mode>_seed<seed>_<time>_<id>/` with
+`run.json`, `history.json`, `best.pt` (not tracked) and `summary.json`
+(selected-epoch validation mIoU, per-class IoU/Dice, parameter count, and
+seconds per epoch). Checkpoints are selected by validation mIoU; the test split
+is never loaded during training. `--data-root` (or `DATA255_DATA_ROOT`) points
+to the directory that contains `oxford-iiit-pet/`.
 
 ## Duplicate check
 

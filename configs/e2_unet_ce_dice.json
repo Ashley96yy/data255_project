@@ -1,5 +1,8 @@
 {
   "model": "unet",
+  "base_channels": 64,
+  "depth": 4,
+  "bilinear": false,
   "seed": 42,
   "seeds": [
     42,
