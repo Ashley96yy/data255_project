@@ -122,3 +122,21 @@ python -m unittest discover -s tests -v
 - Record the exact environment after the first validated run.
 - Save commands and configuration names with each result.
 - Keep generated results and weights outside Git; commit only small summaries needed for the report.
+
+## Validation Dice metrics
+
+Compute per-class Dice and macro Dice from the saved validation confusion
+matrix of the checkpoint already selected by validation mIoU:
+
+```bash
+python -m scripts.summarize_metrics results/e0_small_fcn/full_20261027T171436Z_9f44b7fa
+```
+
+This saves `validation_metrics.json` in the run directory without retraining
+or evaluating the test set. Metrics use dataset-level pixel counts.
+Classes absent from both targets and predictions are excluded from the
+macro average.
+
+For E0 at selected epoch 19, validation mIoU is 60.7613% and macro Dice
+is 73.6560%. Foreground, background, and border Dice scores are
+79.7332%, 89.6342%, and 51.6006%, respectively.

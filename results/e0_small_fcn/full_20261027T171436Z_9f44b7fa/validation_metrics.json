@@ -1,0 +1,44 @@
+{
+  "split": "validation",
+  "selected_epoch": 19,
+  "checkpoint_selection": "highest validation mIoU; first epoch wins ties",
+  "aggregation": "dataset-level confusion matrix",
+  "class_names": [
+    "foreground",
+    "background",
+    "border"
+  ],
+  "miou": 0.6076129781990164,
+  "per_class_iou": [
+    0.662969001946164,
+    0.8121553214051919,
+    0.3477146112456931
+  ],
+  "macro_dice": 0.7365599667669166,
+  "per_class_dice": [
+    0.7973317616507521,
+    0.8963418442249484,
+    0.5160062944250494
+  ],
+  "confusion_matrix": [
+    [
+      11300182,
+      2394467,
+      476888
+    ],
+    [
+      1413785,
+      26573260,
+      649689
+    ],
+    [
+      1459490,
+      1688230,
+      2278505
+    ]
+  ],
+  "source_files": [
+    "run.json",
+    "history.json"
+  ]
+}
