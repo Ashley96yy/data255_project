@@ -1,0 +1,28 @@
+{
+  "experiment": "e3_unet_wce",
+  "model": "unet",
+  "loss": {
+    "name": "wce",
+    "class_weights_path": "configs/class_weights.json",
+    "class_weight_scheme": "median_frequency"
+  },
+  "seed": 44,
+  "mode": "full",
+  "selected_epoch": 30,
+  "epochs_run": 30,
+  "val_miou": 0.7419079786654934,
+  "val_per_class_iou": {
+    "foreground": 0.8227014946375198,
+    "background": 0.890476043869577,
+    "border": 0.5125463974893835
+  },
+  "val_macro_dice": 0.8408398485060818,
+  "val_per_class_dice": {
+    "foreground": 0.9027276238681422,
+    "background": 0.942065409140948,
+    "border": 0.6777265125091556
+  },
+  "trainable_parameters": 31037763,
+  "train_seconds": 1266.3,
+  "seconds_per_epoch": 42.2
+}

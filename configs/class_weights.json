@@ -1,0 +1,36 @@
+{
+  "source_split": "train",
+  "num_images": 2937,
+  "image_size": 256,
+  "mask_resize": "nearest",
+  "class_names": [
+    "foreground",
+    "background",
+    "border"
+  ],
+  "pixel_counts": [
+    58080920,
+    112295387,
+    22102925
+  ],
+  "frequency": [
+    0.301751619624085,
+    0.5834156019492015,
+    0.11483277842671359
+  ],
+  "weights": {
+    "median_frequency": [
+      1.0,
+      0.517215546886178,
+      2.627748137407153
+    ],
+    "inverse_frequency": [
+      0.7237699117529096,
+      0.37434505072704194,
+      1.9018850375200482
+    ]
+  },
+  "default_scheme": "median_frequency",
+  "split_csv": "configs\\train_val_split_clean.csv",
+  "split_csv_sha256": "6b0ea9c5348757a7ea454419cf9635b61faddfd2c5d98714a997ce8d1f563f7a"
+}

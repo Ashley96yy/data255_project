@@ -1,0 +1,61 @@
+{
+  "config": {
+    "model": "unet",
+    "base_channels": 64,
+    "depth": 4,
+    "bilinear": false,
+    "seed": 43,
+    "image_size": 256,
+    "batch_size": 8,
+    "num_workers": 0,
+    "epochs": 30,
+    "learning_rate": 0.001,
+    "augment": true,
+    "split_csv": "configs/train_val_split_clean.csv",
+    "loss": {
+      "name": "ce"
+    },
+    "experiment": "e1_unet_ce",
+    "mode": "full",
+    "max_train_batches": null,
+    "max_val_batches": null
+  },
+  "metadata": {
+    "python": "3.11.9",
+    "torch": "2.11.0+cu126",
+    "torchvision": "0.26.0+cu126",
+    "numpy": "2.4.6",
+    "pandas": "3.1.1",
+    "pillow": "13.0.0",
+    "device": "cuda",
+    "device_name": "NVIDIA GeForce RTX 4090",
+    "cuda": "12.6",
+    "cudnn": 91002,
+    "git_commit": null,
+    "git_tracked_changes": null,
+    "config_file": "configs\\e1_unet_ce.json",
+    "split_sha256": "6b0ea9c5348757a7ea454419cf9635b61faddfd2c5d98714a997ce8d1f563f7a",
+    "source_sha256": {
+      "src/dataset.py": "42d2c52528b0af345f8f6cdfe42c8c21e7031ebe1eddafda44b6163b3552c090",
+      "src/metrics.py": "86e93c6a1a2694cccbf3521bf84a53572613d147f2aef56e8ce17a1dbdb32f14",
+      "src/training.py": "1903c8955ac2783b5aee190654612dd22febc20febd46062d30d17736fbf76a5",
+      "src/losses/__init__.py": "3653b95499a26340cf29cc4fb388507975ca221db461a7a703ee2edf43a257b7",
+      "src/models/__init__.py": "adf53be393713d7d487ee273d03f2dc901cfafb4190458aa244cfb8f946093cb",
+      "src/models/small_fcn.py": "eac03acfbfd84386263b288c8be51692827aae2a76e5a6bca7d2446f9c784b17",
+      "src/models/unet.py": "4063be74f84cdfdf078be2070829dca356990ab53e7648a1938585a4d6aed897"
+    },
+    "train_samples": 2937,
+    "val_samples": 736,
+    "class_names": [
+      "foreground",
+      "background",
+      "border"
+    ],
+    "trainable_parameters": 31037763
+  },
+  "checkpoint_selection": "highest validation mIoU; first epoch wins ties",
+  "loss": "SegmentationLoss()",
+  "status": "completed",
+  "best_epoch": 30,
+  "best_val_miou": 0.7430533179222115
+}

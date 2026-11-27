@@ -1,0 +1,26 @@
+{
+  "experiment": "e1_unet_ce",
+  "model": "unet",
+  "loss": {
+    "name": "ce"
+  },
+  "seed": 42,
+  "mode": "full",
+  "selected_epoch": 29,
+  "epochs_run": 30,
+  "val_miou": 0.748168117344373,
+  "val_per_class_iou": {
+    "foreground": 0.8264310191797855,
+    "background": 0.9049668963124451,
+    "border": 0.5131064365408884
+  },
+  "val_macro_dice": 0.8444323781148689,
+  "val_per_class_dice": {
+    "foreground": 0.9049682254640194,
+    "background": 0.950112989432249,
+    "border": 0.6782159194483379
+  },
+  "trainable_parameters": 31037763,
+  "train_seconds": 1341.1,
+  "seconds_per_epoch": 44.7
+}
